@@ -1,15 +1,16 @@
 package net.lhm.projagile.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+
 public class SprintBacklog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

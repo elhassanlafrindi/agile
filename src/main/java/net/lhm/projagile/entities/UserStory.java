@@ -1,13 +1,12 @@
 package net.lhm.projagile.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 @Entity @Data
 @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter
 public class UserStory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,9 +14,11 @@ public class UserStory {
     private String title;
     private String description;
     private int priorite;
-
     @Enumerated(EnumType.STRING)
-    private Statut statut;
+    private Status statut;
+    public enum Status {
+        ToDo, InProgress, Done
+    }
 
     @ManyToMany(fetch = FetchType.LAZY)
   /*  @JoinTable(name = "userstory_epic",

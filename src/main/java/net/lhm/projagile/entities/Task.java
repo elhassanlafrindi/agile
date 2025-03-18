@@ -1,10 +1,10 @@
 package net.lhm.projagile.entities;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 @Entity @Data
 @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,8 +12,12 @@ public class Task {
     private String titre;
     private String description;
 
+
     @Enumerated(EnumType.STRING)
-    private Statut statut;
+    private Status statut;
+    public enum Status {
+        ToDo, InProgress, Done
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SprintBacklog sprintBacklog;
