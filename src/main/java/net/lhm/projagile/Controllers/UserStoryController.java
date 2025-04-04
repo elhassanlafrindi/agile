@@ -15,7 +15,7 @@ public class UserStoryController {
         this.userStoryService = userStoryService;
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public UserStory create(@RequestBody UserStory userStory) {
         return userStoryService.createUserStory(userStory);
     }

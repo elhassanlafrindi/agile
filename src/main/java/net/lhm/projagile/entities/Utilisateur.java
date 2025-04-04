@@ -11,6 +11,7 @@ public class Utilisateur {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nom;
-
+    private String password;
+    private Role role;
 
 }

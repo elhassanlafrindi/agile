@@ -1,7 +1,7 @@
 package net.lhm.projagile.entities;
 import jakarta.persistence.*;
 import lombok.*;
-
+import java.util.List;
 @Entity @Data
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
@@ -12,16 +12,12 @@ public class Task {
     private String titre;
     private String description;
 
-
     @Enumerated(EnumType.STRING)
     private Status statut;
-    public enum Status {
-        ToDo, InProgress, Done
-    }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private SprintBacklog sprintBacklog;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private UserStory userStory;
 }

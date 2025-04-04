@@ -16,14 +16,12 @@ public class UserStory {
     private int priorite;
     @Enumerated(EnumType.STRING)
     private Status statut;
-    public enum Status {
-        ToDo, InProgress, Done
-    }
+
 
     @ManyToMany(fetch = FetchType.LAZY)
-  /*  @JoinTable(name = "userstory_epic",
+   @JoinTable(name = "userstory_epic",
             joinColumns = @JoinColumn(name = "userstory_id"),
-            inverseJoinColumns = @JoinColumn(name = "epic_id"))*/
+            inverseJoinColumns = @JoinColumn(name = "epic_id"))
     private List<Epic> epics;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,4 +29,7 @@ public class UserStory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SprintBacklog sprintBacklog;
+
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Task> task;
 }

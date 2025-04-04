@@ -17,9 +17,7 @@ public class Epic {
 
     @Enumerated(EnumType.STRING)
     private Status statut;
-    public enum Status {
-        ToDo, InProgress, Done
-    }
+
 
     @ManyToMany(mappedBy = "epics", fetch = FetchType.LAZY)
     private List<UserStory> userStories ;
