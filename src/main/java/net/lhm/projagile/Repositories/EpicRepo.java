@@ -1,7 +1,7 @@
 package net.lhm.projagile.Repositories;
 
 import net.lhm.projagile.entities.Epic;
-import net.lhm.projagile.entities.Status;
+import net.lhm.projagile.entities.Statut;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface EpicRepo extends JpaRepository<Epic, Integer> {
 
-    List<Epic> findByStatut(Status statut);
+    List<Epic> findByStatut(Statut statut);
 
     // Find epics containing a specific term in name or description
     List<Epic> findByNomContainingOrDescriptionContaining(String nomTerm, String descriptionTerm);
@@ -25,5 +25,5 @@ public interface EpicRepo extends JpaRepository<Epic, Integer> {
     List<Epic> findEpicsWithNoUserStories();
 
     // Count epics by status
-    long countByStatut(Status statut);
+    long countByStatut(Statut statut);
 }

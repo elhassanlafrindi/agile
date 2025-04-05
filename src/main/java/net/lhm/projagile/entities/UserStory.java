@@ -7,6 +7,7 @@ import java.util.List;
 @Entity @Data
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
+@Builder
 public class UserStory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +16,7 @@ public class UserStory {
     private String description;
     private int priorite;
     @Enumerated(EnumType.STRING)
-    private Status statut;
+    private Statut statut;
 
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -30,6 +31,6 @@ public class UserStory {
     @ManyToOne(fetch = FetchType.LAZY)
     private SprintBacklog sprintBacklog;
 
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userStory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Task> task;
 }

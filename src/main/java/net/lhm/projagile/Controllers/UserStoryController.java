@@ -1,13 +1,20 @@
 package net.lhm.projagile.Controllers;
 
+import jakarta.validation.Valid;
 import net.lhm.projagile.Services.UserStoryService;
+import net.lhm.projagile.dto.UserStoryDTO;
 import net.lhm.projagile.entities.UserStory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping ("/api/userstories")
+@RequestMapping ("/agile/userStory")
 public class UserStoryController {
     private final UserStoryService userStoryService;
 
@@ -15,28 +22,64 @@ public class UserStoryController {
         this.userStoryService = userStoryService;
     }
 
-    @PostMapping("/add")
-    public UserStory create(@RequestBody UserStory userStory) {
-        return userStoryService.createUserStory(userStory);
+    @PostMapping("/create")
+    public ResponseEntity<?> create(@Valid @RequestBody UserStoryDTO userStoryDTO , BindingResult result) {
+        if (result.hasErrors()) {
+            // Collect the error messages and return them as the response body
+            List<String> error = result.getAllErrors().stream()
+                    .map(err -> err.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            // Return 400 Bad Request with the error list in the response body
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+
+        try {
+            UserStory createdUserStory = userStoryService.createUserStory(userStoryDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUserStory); // 201 Created
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data: " + e.getMessage()); // 400 Bad Request
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred."); // 500 Internal Server Error
+        }
     }
 
     @PutMapping("/{id}")
-    public UserStory update(@PathVariable Integer id, @RequestBody UserStory userStory) {
-        return userStoryService.updateUserStory(id, userStory);
-    }
+    public ResponseEntity<?> update(@PathVariable Integer id,@Valid @RequestBody UserStoryDTO userStoryDTO, BindingResult result) {
+        if(result.hasErrors()) {
+            List<String> error=result.getAllErrors().stream().map(errore->errore.getDefaultMessage()).collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        try {
+            UserStory updatedUserStory = userStoryService.updateUserStory(id, userStoryDTO);
+            return ResponseEntity.ok(updatedUserStory);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // Returns 404 if not found
+        }   }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        userStoryService.deleteUserStory(id);
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        try {
+            userStoryService.deleteUserStory(id);
+            return ResponseEntity.ok("UserStory supprimée avec succès !");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Erreur: UserStory non trouvée !");
+        }
     }
 
     @GetMapping
-    public List<UserStory> getAll() {
-        return userStoryService.getAllUserStories();
+    public ResponseEntity<List<UserStory>> getAll() {
+        List<UserStory> all=userStoryService.getAllUserStories();
+
+        return all.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);
     }
 
     @GetMapping("/{id}")
-    public UserStory getById(@PathVariable Integer id) {
-        return userStoryService.getUserStoryById(id);
+    public ResponseEntity<UserStory> getById(@PathVariable Integer id) {
+
+        UserStory userStory= userStoryService.getUserStoryById(id);
+        return userStory==null ? ResponseEntity.notFound().build() :
+                ResponseEntity.ok(userStory);
     }
 }

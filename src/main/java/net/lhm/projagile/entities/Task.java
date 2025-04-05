@@ -13,7 +13,7 @@ public class Task {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private Status statut;
+    private Statut statut;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private SprintBacklog sprintBacklog;

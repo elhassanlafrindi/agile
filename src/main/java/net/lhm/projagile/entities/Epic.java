@@ -7,7 +7,7 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor @AllArgsConstructor
-@Getter @Setter
+@Getter @Setter @Builder
 public class Epic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class Epic {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private Status statut;
+    private Statut statut;
 
 
     @ManyToMany(mappedBy = "epics", fetch = FetchType.LAZY)

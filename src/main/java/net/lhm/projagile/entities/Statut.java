@@ -1,5 +1,5 @@
 package net.lhm.projagile.entities;
 
-public enum Status {
+public enum Statut {
     ToDo, InProgress, Done
 }

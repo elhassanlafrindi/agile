@@ -1,6 +1,7 @@
 package net.lhm.projagile.Controllers;
 
 import net.lhm.projagile.Services.TaskService;
+import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.Task;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}/statut")
-    public void setStatut(@PathVariable Integer id, @RequestParam Task.Status statut) {
+    public void setStatut(@PathVariable Integer id, @RequestParam Statut statut) {
         taskService.setStatut(id, statut);
     }
 

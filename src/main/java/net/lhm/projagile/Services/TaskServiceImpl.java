@@ -1,6 +1,7 @@
 package net.lhm.projagile.Services;
 
 import net.lhm.projagile.Repositories.TaskRepo;
+import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.Task;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,7 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public void setStatut(Integer id, Task.Status statut) {
+    public void setStatut(Integer id, Statut statut) {
         Optional<Task> existing = taskRepo.findById(id);
         if (existing.isPresent()) {
             Task task = existing.get();
