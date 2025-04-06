@@ -1,117 +1,59 @@
 package net.lhm.projagile.Services;
 
-import net.lhm.projagile.Repositories.EpicRepo;
+import jakarta.transaction.Transactional;
 import net.lhm.projagile.Repositories.ProductBacklogRepo;
-import net.lhm.projagile.Repositories.UserStoryRepo;
-import net.lhm.projagile.entities.Epic;
+import net.lhm.projagile.dto.ProductBacklogDTO;
 import net.lhm.projagile.entities.ProductBacklog;
-import net.lhm.projagile.entities.UserStory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductBacklogImpl implements ProductBacklogService {
-    @Autowired
-    private ProductBacklogRepo productBacklogRepository;
-    @Autowired
-    private UserStoryRepo userStoryRepository;
+    private final ProductBacklogRepo productBacklogRepo;
 
-    @Autowired
-    private EpicRepo epicRepository;
-
-    @Override
-    public ProductBacklog addProductBacklog(Integer id, String nom) {
-        ProductBacklog productBacklog = new ProductBacklog();
-        productBacklog.setId(id);
-        productBacklog.setNom(nom);
-        return productBacklogRepository.save(productBacklog);
+    public ProductBacklogImpl(ProductBacklogRepo productBacklogRepo) {
+        this.productBacklogRepo = productBacklogRepo;
     }
+
     @Override
-    public void updateProductBacklog(String nom) {
-        Optional<ProductBacklog> existingBacklog = productBacklogRepository.findById(1);
-        if (existingBacklog.isPresent()) {
-            ProductBacklog backlog = existingBacklog.get();
-            backlog.setNom(nom);
-            productBacklogRepository.save(backlog);
-        } else {
-            throw new RuntimeException("Product Backlog non trouvé !");
+    @Transactional
+    public ProductBacklog createProductBacklog(ProductBacklogDTO productBacklogDTO) {
+        return productBacklogRepo.save(ProductBacklog.builder()
+                .nom(productBacklogDTO.getNom())
+                .build());
+    }
+
+    @Override
+    public ProductBacklog updateProductBacklog(Integer id, ProductBacklogDTO productBacklogDTO) {
+        Optional<ProductBacklog> productBacklogOptional = productBacklogRepo.findById(id);
+        if (productBacklogOptional.isPresent()) {
+            ProductBacklog productBacklog = productBacklogOptional.get();
+            productBacklog.setNom(productBacklogDTO.getNom());
+            return productBacklogRepo.save(productBacklog);
         }
+        throw new RuntimeException("ProductBacklog non trouvé !");
     }
 
     @Override
-    public void deleteProductBacklog() {
-        productBacklogRepository.deleteAll();
-    }
-
-    @Override
-    public void addUserStory(UserStory userStory) {
-        Optional<ProductBacklog> existingBacklog = productBacklogRepository.findById(1);
-        if (existingBacklog.isPresent()) {
-            ProductBacklog backlog = existingBacklog.get();
-            backlog.getUserStories().add(userStory);
-            userStory.setProductBacklog(backlog);
-            userStoryRepository.save(userStory);
-            productBacklogRepository.save(backlog);
-        } else {
-            throw new RuntimeException("Product Backlog non trouvé !");
+    public void deleteProductBacklog(Integer id) {
+        if (!productBacklogRepo.existsById(id)) {
+            throw new RuntimeException("ProductBacklog non trouvé !");
         }
+        productBacklogRepo.deleteById(id);
     }
 
     @Override
-    public void removeUserStory(UserStory userStory) {
-        Optional<ProductBacklog> existingBacklog = productBacklogRepository.findById(1);
-        if (existingBacklog.isPresent()) {
-            ProductBacklog backlog = existingBacklog.get();
-            backlog.getUserStories().remove(userStory);
-            userStoryRepository.delete(userStory);
-            productBacklogRepository.save(backlog);
-        } else {
-            throw new RuntimeException("Product Backlog non trouvé !");
-        }
-    }
-//
-//    @Override
-//    public void addEpic(Epic epic) {
-//        Optional<ProductBacklog> existingBacklog = productBacklogRepository.findById(1);
-//
-//        if (existingBacklog.isPresent()) {
-//            ProductBacklog backlog = existingBacklog.get();
-//
-//
-//            epic.setProductBacklog(backlog);
-//
-//            // Sauvegarder uniquement l'Epic (JPA mettra à jour la relation)
-//            epicRepository.save(epic);
-//        } else {
-//            throw new RuntimeException("Product Backlog non trouvé !");
-//        }
-//    }
-
-
-
-
-    @Override
-    public void removeEpic(Epic epic) {
-        if (epicRepository.existsById(epic.getId())) {
-            epicRepository.deleteById(epic.getId());
-        } else {
-            throw new RuntimeException("Epic non trouvé !");
-        }
+    public List<ProductBacklog> getAllProductBacklogs() {
+        return productBacklogRepo.findAll();
     }
 
     @Override
-    public void prioritizeUserStories() {
-        Optional<ProductBacklog> existingBacklog = productBacklogRepository.findById(1);
-        if (existingBacklog.isPresent()) {
-            ProductBacklog backlog = existingBacklog.get();
-            backlog.getUserStories().sort(Comparator.comparingInt(UserStory::getPriorite));
-            productBacklogRepository.save(backlog);
-        } else {
-            throw new RuntimeException("Product Backlog non trouvé !");
-        }
+    public ProductBacklog getProductBacklogById(Integer id) {
+        return productBacklogRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("ProductBacklog non trouvé !"));
     }
+
 
 }
