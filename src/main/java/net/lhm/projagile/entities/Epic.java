@@ -12,15 +12,11 @@ public class Epic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String nom;
+    private String titre;
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    private Statut statut;
 
 
-    @ManyToMany(mappedBy = "epics", fetch = FetchType.LAZY)
-    private List<UserStory> userStories ;
 
 
 }

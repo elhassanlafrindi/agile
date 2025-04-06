@@ -1,16 +1,19 @@
 package net.lhm.projagile.Services;
 
+import net.lhm.projagile.dto.EpicDTO;
 import net.lhm.projagile.entities.Epic;
-import net.lhm.projagile.entities.UserStory;
+import net.lhm.projagile.entities.Statut;
+
 
 import java.util.List;
 
 public interface EpicService {
-    Epic addEpic(Integer id, String titre, String description);
-    void updateEpic(Integer id,String titre, String description);
+    Epic addEpic(EpicDTO epicDTO);
+    void updateEpic(Integer id, EpicDTO epicDTO);
     void deleteEpic(Integer id);
-    void addUserStory(UserStory userStory);
-    void removeUserStory(UserStory userStory);
+    void addUserStory(int userStoryId,int epicId);
+    void removeUserStory(int userStoryId,int epicId);
     List<Epic> getAllEpics();
     Epic getEpicById(Integer id);
+
 }

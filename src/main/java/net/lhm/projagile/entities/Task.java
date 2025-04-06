@@ -4,7 +4,7 @@ import lombok.*;
 import java.util.List;
 @Entity @Data
 @NoArgsConstructor @AllArgsConstructor
-@Getter @Setter
+@Getter @Setter @Builder
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

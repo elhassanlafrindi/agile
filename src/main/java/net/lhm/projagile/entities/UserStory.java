@@ -3,7 +3,10 @@ package net.lhm.projagile.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @Entity @Data
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
@@ -19,10 +22,7 @@ public class UserStory {
     private Statut statut;
 
 
-    @ManyToMany(fetch = FetchType.LAZY)
-   @JoinTable(name = "userstory_epic",
-            joinColumns = @JoinColumn(name = "userstory_id"),
-            inverseJoinColumns = @JoinColumn(name = "epic_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Epic> epics;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,5 +32,5 @@ public class UserStory {
     private SprintBacklog sprintBacklog;
 
     @OneToMany(mappedBy = "userStory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Task> task;
+    private Set<Task> task=new HashSet<>();
 }

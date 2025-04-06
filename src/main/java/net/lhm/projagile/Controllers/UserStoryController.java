@@ -3,6 +3,7 @@ package net.lhm.projagile.Controllers;
 import jakarta.validation.Valid;
 import net.lhm.projagile.Services.UserStoryService;
 import net.lhm.projagile.dto.UserStoryDTO;
+import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.UserStory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping ("/agile/userStory")
+@RequestMapping ("/agile/userStories")
 public class UserStoryController {
     private final UserStoryService userStoryService;
 
@@ -81,5 +82,10 @@ public class UserStoryController {
         UserStory userStory= userStoryService.getUserStoryById(id);
         return userStory==null ? ResponseEntity.notFound().build() :
                 ResponseEntity.ok(userStory);
+    }
+    @GetMapping("/by-statut")
+    public ResponseEntity<List<UserStory>> getUsingStatut(@RequestParam(required = true) Statut statut) {
+        List<UserStory> all = userStoryService.getByStatus(statut);
+        return all.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);
     }
 }
