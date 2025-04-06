@@ -6,7 +6,7 @@ import lombok.*;
 @Entity
 @Data @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter @Setter @Builder
 public class Utilisateur {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
