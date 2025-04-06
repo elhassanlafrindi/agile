@@ -12,6 +12,8 @@ public class Utilisateur {
     private int id;
     private String nom;
     private String password;
+    private String prenom;
+    private String email;
     private Role role;
 
 }
