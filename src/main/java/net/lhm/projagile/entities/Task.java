@@ -17,7 +17,9 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private SprintBacklog sprintBacklog;
-
+    @OneToOne
+    @JoinColumn(name = "userId", unique = true)
+    private Utilisateur user;
     @ManyToOne(fetch = FetchType.EAGER)
     private UserStory userStory;
 }

@@ -6,6 +6,7 @@ import net.lhm.projagile.dto.ProductBacklogDTO;
 import net.lhm.projagile.entities.ProductBacklog;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/agile/productBacklogs")
+@PreAuthorize("hasRole('PRODUCT_OWNER')")
 public class ProductBacklogController {
     private final ProductBacklogService productBacklogService;
 
@@ -36,6 +38,7 @@ public class ProductBacklogController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne");
         }
+
     }
 
     @PutMapping("/{id}")
@@ -78,6 +81,26 @@ public class ProductBacklogController {
             return ResponseEntity.ok(productBacklog);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+    @PostMapping("{id}/userstories/{idUserStory}")
+    public ResponseEntity<?> addUserStory(@PathVariable Integer id, @PathVariable Integer idUserStory) {
+        try{
+            productBacklogService.addUserStorytoProductBacklog(id, idUserStory);
+           return ResponseEntity.ok("added successfly");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @DeleteMapping("{id}/userstories/{idUserStory}")
+    public ResponseEntity<?> removeUserStory(
+            @PathVariable Integer id,
+            @PathVariable Integer idUserStory) {
+        try {
+            productBacklogService.removeUserStoryFromProductBacklog(id, idUserStory);
+            return ResponseEntity.ok("UserStory removed successfully!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

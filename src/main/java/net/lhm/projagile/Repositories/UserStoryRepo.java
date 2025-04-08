@@ -26,5 +26,7 @@ public interface UserStoryRepo extends JpaRepository<UserStory, Integer> {
 
 
     void deleteById(int id);
+
+    Integer id(int id);
 }
 

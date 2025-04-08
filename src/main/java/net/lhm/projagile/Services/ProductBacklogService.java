@@ -15,4 +15,6 @@ public interface ProductBacklogService {
     void deleteProductBacklog(Integer id);
     List<ProductBacklog> getAllProductBacklogs();
     ProductBacklog getProductBacklogById(Integer id);
+    void removeUserStoryFromProductBacklog(int idProductBacklog, int idUserStory);
+    void addUserStorytoProductBacklog( int idProductBacklog, int idUserStory);
 }

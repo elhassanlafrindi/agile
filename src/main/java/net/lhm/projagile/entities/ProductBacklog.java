@@ -14,6 +14,6 @@ public class ProductBacklog {
     private int id;
     private String nom;
 
-    @OneToMany(mappedBy ="productBacklog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="productBacklog", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserStory> userStories ;
 }

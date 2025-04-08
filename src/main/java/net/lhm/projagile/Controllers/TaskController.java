@@ -2,12 +2,14 @@ package net.lhm.projagile.Controllers;
 
 import jakarta.validation.Valid;
 import net.lhm.projagile.Services.TaskService;
+import net.lhm.projagile.Services.UtilisateurService;
 import net.lhm.projagile.dto.TaskDTO;
 import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.Task;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +18,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/agile/tasks")
+@PreAuthorize("hasRole('SCRUM_MASTER')")
 public class TaskController {
     private final TaskService taskService;
-
-    public TaskController(TaskService taskService) {
+    private final UtilisateurService utilisateurService;
+    public TaskController(TaskService taskService, UtilisateurService utilisateurService) {
         this.taskService = taskService;
+        this.utilisateurService = utilisateurService;
     }
 
     @PostMapping("/create")
@@ -43,6 +47,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('SCRUM_MASTER','DEVELOPER')")
     public ResponseEntity<?> update(@PathVariable Integer id, @Valid @RequestBody TaskDTO taskDTO, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = result.getAllErrors().stream()
@@ -84,5 +89,14 @@ public class TaskController {
     public ResponseEntity<List<Task>> getUsingStatut(@RequestParam(required = true) Statut statut) {
         List<Task> all = taskService.getByStatus(statut);
         return all.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);
+    }
+    @PostMapping("{id}/tasks/{idutilisateur}")
+    public ResponseEntity<String> addTask(@PathVariable Integer id, @PathVariable Integer idutilisateur) {
+        try{
+                    taskService.affecttaskToUtilisateur(id,idutilisateur);
+                    return ResponseEntity.ok("Task added successfully to utilisateur"+utilisateurService.getUtilisateurById(idutilisateur).getNom());
+        }catch (RuntimeException    e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("bad request");
+        }
     }
 }

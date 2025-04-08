@@ -8,6 +8,8 @@ import net.lhm.projagile.entities.UserStory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping ("/agile/userStories")
+@PreAuthorize("hasRole('PRODUCT_OWNER')")
 public class UserStoryController {
     private final UserStoryService userStoryService;
 
@@ -70,6 +73,7 @@ public class UserStoryController {
     }
 
     @GetMapping
+
     public ResponseEntity<List<UserStory>> getAll() {
         List<UserStory> all=userStoryService.getAllUserStories();
 
@@ -84,6 +88,7 @@ public class UserStoryController {
                 ResponseEntity.ok(userStory);
     }
     @GetMapping("/by-statut")
+
     public ResponseEntity<List<UserStory>> getUsingStatut(@RequestParam(required = true) Statut statut) {
         List<UserStory> all = userStoryService.getByStatus(statut);
         return all.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);

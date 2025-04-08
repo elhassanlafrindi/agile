@@ -1,5 +1,6 @@
 package net.lhm.projagile.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,11 +27,12 @@ public class UserStory {
     private List<Epic> epics;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private ProductBacklog productBacklog;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SprintBacklog sprintBacklog;
 
-    @OneToMany(mappedBy = "userStory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userStory", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Task> task=new HashSet<>();
 }

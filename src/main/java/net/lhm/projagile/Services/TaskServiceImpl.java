@@ -2,9 +2,11 @@ package net.lhm.projagile.Services;
 
 import jakarta.transaction.Transactional;
 import net.lhm.projagile.Repositories.TaskRepo;
+import net.lhm.projagile.Repositories.UtilisateurRepo;
 import net.lhm.projagile.dto.TaskDTO;
 import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.Task;
+import net.lhm.projagile.entities.Utilisateur;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +15,10 @@ import java.util.Optional;
 @Service
 public class TaskServiceImpl implements TaskService{
     private final TaskRepo taskRepo;
-
-    public TaskServiceImpl(TaskRepo taskRepo) {
+    private final UtilisateurRepo utilisateurRepo;
+    public TaskServiceImpl(TaskRepo taskRepo, UtilisateurRepo utilisateurRepo) {
         this.taskRepo = taskRepo;
+        this.utilisateurRepo = utilisateurRepo;
     }
 
     @Override
@@ -64,5 +67,15 @@ public class TaskServiceImpl implements TaskService{
     @Override
     public List<Task> getByStatus(Statut statut) {
         return taskRepo.findByStatut(statut);
+    }
+
+    @Override
+    public void affecttaskToUtilisateur(int idtask,int idutilisateur) {
+        Utilisateur utilisateur=utilisateurRepo.findById(idutilisateur).
+                orElseThrow(()->new RuntimeException("Utilisateur not found!"));
+        Task task=taskRepo.findById(idtask).
+                orElseThrow(() -> new RuntimeException("Task not found!"));
+        task.setUser(utilisateur);
+        taskRepo.save(task);
     }
 }

@@ -15,4 +15,5 @@ public interface TaskService {
     List<Task> getAllTasks();
     Task getTaskById(Integer id);
     List<Task> getByStatus(Statut statut);
+    void affecttaskToUtilisateur(int idutilisateur,int idtask);
 }

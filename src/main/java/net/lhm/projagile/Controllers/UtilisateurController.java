@@ -3,9 +3,11 @@ package net.lhm.projagile.Controllers;
 import jakarta.validation.Valid;
 import net.lhm.projagile.Services.UtilisateurService;
 import net.lhm.projagile.dto.UtilisateurDTO;
+import net.lhm.projagile.entities.Role;
 import net.lhm.projagile.entities.Utilisateur;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/agile/utilisateurs")
+@PreAuthorize("hasAnyRole('PRODUCT_OWNER','SCRUM_MASTER')")
 public class UtilisateurController {
     private final UtilisateurService utilisateurService;
 
@@ -76,6 +79,24 @@ public class UtilisateurController {
         try {
             Utilisateur utilisateur = utilisateurService.getUtilisateurById(id);
             return ResponseEntity.ok(utilisateur);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+    @GetMapping("/by-email")
+    public ResponseEntity<Utilisateur> getByEmail( @RequestParam(required = true) String email) {
+        try {
+            Utilisateur utilisateur = utilisateurService.loadUtilisateurByEmail(email);
+            return ResponseEntity.ok(utilisateur);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+    @GetMapping("/by-role")
+    public ResponseEntity<List<Utilisateur>> getByRole( @RequestParam(required = true) Role role) {
+        try {
+            List<Utilisateur> utilisateur = utilisateurService.loadUtilisateurByRole(role);
+            return !utilisateur.isEmpty() ? ResponseEntity.ok(utilisateur): ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
