@@ -1,12 +1,16 @@
 package net.lhm.projagile.security;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import net.lhm.projagile.Services.UtilisateurServiceImpl;
 import net.lhm.projagile.entities.Utilisateur;
 import net.lhm.projagile.filter.JwtAuthentificationFilter;
 import net.lhm.projagile.filter.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -60,12 +64,12 @@ public class SecurityConfig {
         jwtAuthFilter.setFilterProcessesUrl("/login");
 
         http .csrf(csrf -> csrf.disable());
+         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-      //  http.authorizeHttpRequests(auth -> auth
-        //        .requestMatchers(HttpMethod.GET, "/agile/userStories").hasAuthority("SCRUM_MASTER")
-       // );
-        http.authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated() );
+
+        http.authorizeHttpRequests(auth ->auth
+                 .requestMatchers("/agile/utilisateurs/create").permitAll()
+                .anyRequest().authenticated() );
         http.addFilter(jwtAuthFilter);
         http       .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -73,5 +77,18 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

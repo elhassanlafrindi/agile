@@ -1,5 +1,6 @@
 package net.lhm.projagile.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,5 +16,6 @@ public class ProductBacklog {
     private String nom;
 
     @OneToMany(mappedBy ="productBacklog", fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonIgnore
     private List<UserStory> userStories ;
 }

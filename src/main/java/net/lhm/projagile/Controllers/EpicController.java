@@ -3,6 +3,7 @@ package net.lhm.projagile.Controllers;
 import jakarta.validation.Valid;
 import net.lhm.projagile.Services.EpicService;
 import net.lhm.projagile.dto.EpicDTO;
+import net.lhm.projagile.dtoResponse.EpicDTORes;
 import net.lhm.projagile.entities.Epic;
 import net.lhm.projagile.entities.UserStory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,8 +94,8 @@ public class EpicController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Epic>> getAllEpics() {
-        List<Epic> epics=epicService.getAllEpics();
+    public ResponseEntity<List<EpicDTORes>> getAllEpics() {
+        List<EpicDTORes> epics=epicService.getAllEpics();
         return epics.isEmpty() ?ResponseEntity.noContent().build() : ResponseEntity.ok(epics);
     }
 
@@ -102,7 +103,7 @@ public class EpicController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getEpicById(@PathVariable Integer id) {
         try{
-            Epic epic=epicService.getEpicById(id);
+            EpicDTORes epic=epicService.getEpicById(id);
         return ResponseEntity.ok(epic);
         }
         catch (RuntimeException e) {

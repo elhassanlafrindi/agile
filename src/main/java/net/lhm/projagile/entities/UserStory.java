@@ -26,8 +26,7 @@ public class UserStory {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Epic> epics;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     private ProductBacklog productBacklog;
 
     @ManyToOne(fetch = FetchType.LAZY)

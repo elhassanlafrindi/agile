@@ -1,9 +1,6 @@
 package net.lhm.projagile.Repositories;
 
-import net.lhm.projagile.entities.SprintBacklog;
-import net.lhm.projagile.entities.Statut;
-import net.lhm.projagile.entities.Task;
-import net.lhm.projagile.entities.UserStory;
+import net.lhm.projagile.entities.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -11,7 +8,7 @@ import java.util.List;
 public interface TaskRepo extends JpaRepository<Task, Integer> {
     List<Task> findByUserStory(UserStory userStory);
     List<Task> findBySprintBacklog(SprintBacklog sprintBacklog);
-
+    List<Task> findByUser(Utilisateur user);
     List<Task> findByStatut(Statut statut);
     List<Task> findByTitre(String titre);
 }

@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import net.lhm.projagile.entities.Statut;
 
 
@@ -15,11 +12,12 @@ import net.lhm.projagile.entities.Statut;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserStoryDTO {
     @NotNull(message = "Le titre est obligatoire")
     @Size(min = 2, message = "Le titre doit contenir au moins 2 caractères")
     private String title;
-
+    int id;
     private String description;
 
     @Min(value = 1, message = "La priorité doit être supérieure ou égale à 1")

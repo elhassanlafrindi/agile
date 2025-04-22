@@ -3,8 +3,9 @@ package net.lhm.projagile.Services;
 import net.lhm.projagile.Repositories.EpicRepo;
 import net.lhm.projagile.Repositories.UserStoryRepo;
 import net.lhm.projagile.dto.EpicDTO;
+import net.lhm.projagile.dto.UserStoryDTO;
+import net.lhm.projagile.dtoResponse.EpicDTORes;
 import net.lhm.projagile.entities.Epic;
-import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.UserStory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,14 +91,66 @@ public class EpicServiceImpl implements EpicService {
         }
     }
     @Override
-    public  List<Epic> getAllEpics() {
-        return epicRepository.findAll();
+    public List<EpicDTORes> getAllEpics() {
+        List<Epic> epics = epicRepository.findAll();
+        List<EpicDTORes> epicDTOResList = new ArrayList<>();
+
+        for (Epic epic : epics) {
+            // Convert List<UserStory> to List<UserStoryDTO>
+            List<UserStoryDTO> userStoryDTOs = epic.getUsetStory().stream().map(us -> UserStoryDTO.builder()
+                    .id(us.getId())
+                    .title(us.getTitle())
+                    .description(us.getDescription())
+                    .priorite(us.getPriorite())
+                    .statut(us.getStatut())
+                    .build()
+            ).toList();
+
+            // Build the EpicDTORes object
+            EpicDTORes dto = EpicDTORes.builder()
+                    .id(epic.getId())
+                    .titre(epic.getTitre())
+                    .description(epic.getDescription())
+                    .usetStory(userStoryDTOs)
+                    .build();
+
+            epicDTOResList.add(dto);
+        }
+
+        return epicDTOResList;
     }
+
 
     @Override
-    public Epic getEpicById(Integer id) {
-        return epicRepository.findById(id).orElseThrow(() -> new RuntimeException("Epic non trouvé !"));
+    public EpicDTORes getEpicById(Integer id) {
+
+            Optional<Epic> epic= epicRepository.findById(id);
+
+        if (epic.isPresent()) {
+
+            List<UserStoryDTO> userStoryDTOs = epic.get().getUsetStory().stream().map(us -> UserStoryDTO.builder()
+                    .id(us.getId())
+                    .title(us.getTitle())
+                    .description(us.getDescription())
+                    .priorite(us.getPriorite())
+                    .statut(us.getStatut())
+                    .build()
+            ).toList();
+
+            // Build the EpicDTORes object
+            EpicDTORes dto = EpicDTORes.builder()
+                    .id(epic.get().getId())
+                    .titre(epic.get().getTitre())
+                    .description(epic.get().getDescription())
+                    .usetStory(userStoryDTOs)
+                    .build();
+
+    return dto;
+        }
+
+       return null;
     }
-
-
 }
+
+
+

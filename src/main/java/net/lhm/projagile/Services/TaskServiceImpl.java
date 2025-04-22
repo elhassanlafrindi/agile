@@ -2,33 +2,48 @@ package net.lhm.projagile.Services;
 
 import jakarta.transaction.Transactional;
 import net.lhm.projagile.Repositories.TaskRepo;
+import net.lhm.projagile.Repositories.UserStoryRepo;
 import net.lhm.projagile.Repositories.UtilisateurRepo;
+import net.lhm.projagile.dto.SprintBacklogDTO;
 import net.lhm.projagile.dto.TaskDTO;
+import net.lhm.projagile.dto.UserStoryDTO;
+import net.lhm.projagile.dto.UtilisateurDTO;
+import net.lhm.projagile.dtoResponse.TaskDTORes;
 import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.Task;
+import net.lhm.projagile.entities.UserStory;
 import net.lhm.projagile.entities.Utilisateur;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService{
     private final TaskRepo taskRepo;
+    private final UserStoryRepo userStoryRepo;
     private final UtilisateurRepo utilisateurRepo;
-    public TaskServiceImpl(TaskRepo taskRepo, UtilisateurRepo utilisateurRepo) {
+    public TaskServiceImpl(TaskRepo taskRepo, UserStoryRepo userStoryRepo, UtilisateurRepo utilisateurRepo) {
         this.taskRepo = taskRepo;
+        this.userStoryRepo = userStoryRepo;
         this.utilisateurRepo = utilisateurRepo;
     }
 
     @Override
     @Transactional
-    public Task createTask(TaskDTO taskDTO) {
-        return taskRepo.save(Task.builder()
-                .titre(taskDTO.getTitre())
-                .description(taskDTO.getDescription())
-                .statut(taskDTO.getStatut())
-                .build());
+    public void createTask(int id,TaskDTO taskDTO) {
+        Optional<UserStory> userStory=userStoryRepo.findById(id);
+        if(userStory.isPresent()){
+             taskRepo.save(Task.builder()
+                    .titre(taskDTO.getTitre())
+                    .description(taskDTO.getDescription())
+                    .statut(taskDTO.getStatut())
+                      .userStory(userStory.get())
+                    .build());
+        }
+
     }
 
     @Override
@@ -54,19 +69,26 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public List<Task> getAllTasks() {
-        return taskRepo.findAll();
+    public List<TaskDTORes> getAllTasks() {
+            List<Task> tasks=taskRepo.findAll();
+        return tasks.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Task getTaskById(Integer id) {
-        return taskRepo.findById(id)
+    public TaskDTORes getTaskById(Integer id) {
+        Task task = taskRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tâche non trouvée !"));
+        return convertToDTO(task);
     }
 
     @Override
-    public List<Task> getByStatus(Statut statut) {
-        return taskRepo.findByStatut(statut);
+    public List<TaskDTORes> getByStatus(Statut statut) {
+        List<Task> tasks = taskRepo.findByStatut(statut);
+        return tasks.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -78,4 +100,54 @@ public class TaskServiceImpl implements TaskService{
         task.setUser(utilisateur);
         taskRepo.save(task);
     }
+
+    @Override
+    public List<TaskDTORes> getTasksByUtilisateur(Integer userId) {
+        Optional<Utilisateur> user=utilisateurRepo.findById(userId);
+        if (user.isPresent()) {
+            List<Task> tasks = taskRepo.findByUser(user.get());
+            return tasks.stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    private TaskDTORes convertToDTO(Task task) {
+        TaskDTORes dto = new TaskDTORes();
+        dto.setId(task.getId());
+        dto.setTitre(task.getTitre());
+        dto.setDescription(task.getDescription());
+        dto.setStatut(task.getStatut());
+
+        if (task.getSprintBacklog() != null) {
+            SprintBacklogDTO sprintDTO = new SprintBacklogDTO();
+            sprintDTO.setId(task.getSprintBacklog().getId());
+            sprintDTO.setTitle(task.getSprintBacklog().getTitle());
+            dto.setSprintBacklog(sprintDTO);
+        }
+
+        if (task.getUser() != null) {
+            UtilisateurDTO userDTO = new UtilisateurDTO();
+            userDTO.setNom(task.getUser().getNom());
+            userDTO.setPrenom(task.getUser().getPrenom());
+            userDTO.setPassword(task.getUser().getPassword());
+            userDTO.setEmail(task.getUser().getEmail());
+            userDTO.setRole(task.getUser().getRole());
+            dto.setUser(userDTO);
+        }
+
+        if (task.getUserStory() != null) {
+            UserStoryDTO userStoryDTO = new UserStoryDTO();
+            userStoryDTO.setId(task.getUserStory().getId());
+            userStoryDTO.setTitle(task.getUserStory().getTitle());
+            userStoryDTO.setDescription(task.getUserStory().getDescription());
+            userStoryDTO.setPriorite(task.getUserStory().getPriorite());
+            userStoryDTO.setStatut(task.getUserStory().getStatut());
+            dto.setUserStory(userStoryDTO);
+        }
+
+        return dto;
+    }
+
 }

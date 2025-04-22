@@ -11,4 +11,5 @@ public class SprintBacklogDTO {
     @NotNull(message = "Le titre est obligatoire")
     @Size(min = 3, message = "Le titre doit contenir au moins 3 caractères")
     private String title;
+    int id;
 }

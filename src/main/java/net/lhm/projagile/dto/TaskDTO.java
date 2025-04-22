@@ -12,7 +12,7 @@ public class TaskDTO {
     @Size(min = 2, message = "Le titre doit contenir au moins 2 caractères")
     private String titre;
     private String description;
-
+    int id;
     @NotNull(message = "Le statut est obligatoire")
     private Statut statut;
 }

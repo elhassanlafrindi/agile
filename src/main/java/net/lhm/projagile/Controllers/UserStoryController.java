@@ -3,6 +3,7 @@ package net.lhm.projagile.Controllers;
 import jakarta.validation.Valid;
 import net.lhm.projagile.Services.UserStoryService;
 import net.lhm.projagile.dto.UserStoryDTO;
+import net.lhm.projagile.dtoResponse.UserStoryDTORes;
 import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.UserStory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -74,23 +75,35 @@ public class UserStoryController {
 
     @GetMapping
 
-    public ResponseEntity<List<UserStory>> getAll() {
-        List<UserStory> all=userStoryService.getAllUserStories();
+    public ResponseEntity<List<UserStoryDTORes>> getAll() {
+        List<UserStoryDTORes> all=userStoryService.getAllUserStories();
 
         return all.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserStory> getById(@PathVariable Integer id) {
+    public ResponseEntity<UserStoryDTORes> getById(@PathVariable Integer id) {
 
-        UserStory userStory= userStoryService.getUserStoryById(id);
+        UserStoryDTORes userStory= userStoryService.getUserStoryById(id);
         return userStory==null ? ResponseEntity.notFound().build() :
                 ResponseEntity.ok(userStory);
     }
     @GetMapping("/by-statut")
 
-    public ResponseEntity<List<UserStory>> getUsingStatut(@RequestParam(required = true) Statut statut) {
-        List<UserStory> all = userStoryService.getByStatus(statut);
+    public ResponseEntity<List<UserStoryDTORes>> getUsingStatut(@RequestParam(required = true) Statut statut) {
+        List<UserStoryDTORes> all = userStoryService.getByStatus(statut);
         return all.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);
     }
+    @PutMapping("/{id}/prioriser")
+    public ResponseEntity<String> prioriser(@PathVariable Integer id, @RequestParam(required = true) int priority) {
+        try {
+            userStoryService.prioriserUserStory(id, priority);
+            return ResponseEntity.ok("Priorité mise à jour avec succès !");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("UserStory non trouvée !");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }

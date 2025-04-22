@@ -10,4 +10,5 @@ public interface ProjetService {
     void deleteProjet(Integer id);
     List<Projet> getAllProjets();
     Projet getProjetById(Integer id);
+    Projet affectProductbacklog(int idBacklog,int idProjet);
 }

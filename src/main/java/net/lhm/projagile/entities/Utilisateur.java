@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Data @NoArgsConstructor
 @AllArgsConstructor
@@ -19,5 +21,6 @@ public class Utilisateur {
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
-
+    @OneToMany(fetch = FetchType.LAZY ,mappedBy = "user")
+    List<Task> tasks;
 }

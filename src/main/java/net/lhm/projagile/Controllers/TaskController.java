@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import net.lhm.projagile.Services.TaskService;
 import net.lhm.projagile.Services.UtilisateurService;
 import net.lhm.projagile.dto.TaskDTO;
+import net.lhm.projagile.dtoResponse.TaskDTORes;
 import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.Task;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,8 +28,8 @@ public class TaskController {
         this.utilisateurService = utilisateurService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@Valid @RequestBody TaskDTO taskDTO, BindingResult result) {
+    @PostMapping("/create/{id}")
+    public ResponseEntity<?> create(@PathVariable Integer id,@Valid @RequestBody TaskDTO taskDTO, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = result.getAllErrors().stream()
                     .map(err -> err.getDefaultMessage())
@@ -37,7 +38,7 @@ public class TaskController {
         }
 
         try {
-            Task createdTask = taskService.createTask(taskDTO);
+             taskService.createTask(id,taskDTO);
             return ResponseEntity.ok("Task "+taskDTO.getTitre()+" created successfully");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data: " + e.getMessage());
@@ -62,6 +63,14 @@ public class TaskController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<List<TaskDTORes>> getTasksByUtilisateur(@PathVariable Integer userId) {
+        List<TaskDTORes> tasks = taskService.getTasksByUtilisateur(userId);
+        if (tasks == null || tasks.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(tasks);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
@@ -74,23 +83,23 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAll() {
-        List<Task> all = taskService.getAllTasks();
+    public ResponseEntity<List<TaskDTORes>> getAll() {
+        List<TaskDTORes> all = taskService.getAllTasks();
         return all.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getById(@PathVariable Integer id) {
-        Task task = taskService.getTaskById(id);
+    public ResponseEntity<TaskDTORes> getById(@PathVariable Integer id) {
+        TaskDTORes task = taskService.getTaskById(id);
         return task == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(task);
     }
 
     @GetMapping("/by-statut")
-    public ResponseEntity<List<Task>> getUsingStatut(@RequestParam(required = true) Statut statut) {
-        List<Task> all = taskService.getByStatus(statut);
+    public ResponseEntity<List<TaskDTORes>> getUsingStatut(@RequestParam(required = true) Statut statut) {
+        List<TaskDTORes> all = taskService.getByStatus(statut);
         return all.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);
     }
-    @PostMapping("{id}/tasks/{idutilisateur}")
+    @PostMapping("{id}/affect/{idutilisateur}")
     public ResponseEntity<String> addTask(@PathVariable Integer id, @PathVariable Integer idutilisateur) {
         try{
                     taskService.affecttaskToUtilisateur(id,idutilisateur);

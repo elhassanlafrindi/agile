@@ -2,13 +2,16 @@ package net.lhm.projagile.Services;
 
 import jakarta.transaction.Transactional;
 import net.lhm.projagile.Repositories.UserStoryRepo;
-import net.lhm.projagile.dto.UserStoryDTO;
+import net.lhm.projagile.dto.*;
+import net.lhm.projagile.dtoResponse.UserStoryDTORes;
 import net.lhm.projagile.entities.Statut;
 import net.lhm.projagile.entities.UserStory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserStoryServiceImpl implements UserStoryService {
@@ -51,18 +54,80 @@ public class UserStoryServiceImpl implements UserStoryService {
         userStoryRepo.deleteById(id);
     }
     @Override
-    public List<UserStory> getAllUserStories() {
-        return userStoryRepo.findAll();
+    public List<UserStoryDTORes> getAllUserStories() {
+        List<UserStory> userStories = userStoryRepo.findAll();
+        List<UserStoryDTORes> userStoryDTOResList = userStories.stream().map(this::convertToDTORes).collect(Collectors.toList());
+
+        return userStoryDTOResList;
     }
 
+
     @Override
-    public UserStory getUserStoryById(Integer id) {
-        return userStoryRepo.findById(id)
+    public UserStoryDTORes getUserStoryById(Integer id) {
+        UserStory us = userStoryRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("UserStory non trouvée !"));
+        return convertToDTORes(us);
     }
 
     @Override
-    public List<UserStory> getByStatus(Statut statut) {
-        return userStoryRepo.findByStatut(statut);
+    public List<UserStoryDTORes> getByStatus(Statut statut) {
+        List<UserStory> userStories = userStoryRepo.findByStatut(statut);
+        return userStories.stream().map(this::convertToDTORes).collect(Collectors.toList());
     }
+
+    @Override
+    public void prioriserUserStory(int iduserstory, int priority) {
+        if (priority < 1 || priority > 10) {
+            throw new IllegalArgumentException("La priorité doit être entre 1 et 10.");
+        }
+
+        UserStory userStory = userStoryRepo.findById(iduserstory)
+                .orElseThrow(() -> new RuntimeException("UserStory non trouvée !"));
+
+        userStory.setPriorite(priority);
+        userStoryRepo.save(userStory);
+    }
+
+    private UserStoryDTORes convertToDTORes(UserStory us) {
+        List<EpicDTO> epicDTOs = us.getEpics().stream().map(epic -> EpicDTO.builder()
+                .id(epic.getId())
+                .titre(epic.getTitre())
+                .description(epic.getDescription())
+                .build()
+        ).toList();
+
+        UserStoryDTORes dto = new UserStoryDTORes();
+        dto.setId(us.getId());
+        dto.setTitle(us.getTitle());
+        dto.setDescription(us.getDescription());
+        dto.setPriorite(us.getPriorite());
+        dto.setStatut(us.getStatut());
+        dto.setEpics(epicDTOs);
+
+        if (us.getProductBacklog() != null) {
+            dto.setProductBacklog(ProductBacklogDTO.builder()
+                    .id(us.getProductBacklog().getId())
+                    .nom(us.getProductBacklog().getNom())
+                    .build());
+        }
+
+        if (us.getSprintBacklog() != null) {
+            dto.setSprintBacklog(SprintBacklogDTO.builder()
+                    .id(us.getSprintBacklog().getId())
+                    .title(us.getSprintBacklog().getTitle())
+                    .build());
+        }
+
+        if (us.getTask() != null) {
+            dto.setTask(us.getTask().stream().map(task -> TaskDTO.builder()
+                    .id(task.getId())
+                    .titre(task.getTitre())
+                    .description(task.getDescription())
+                    .statut(task.getStatut())
+                    .build()).collect(Collectors.toSet()));
+        }
+
+        return dto;
+    }
+
 }

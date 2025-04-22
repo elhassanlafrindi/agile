@@ -6,6 +6,7 @@ import net.lhm.projagile.dto.ProjetDTO;
 import net.lhm.projagile.entities.Projet;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/agile/projets")
+@PreAuthorize("hasRole('PRODUCT_OWNER')")
 public class ProjetController {
     private final ProjetService projetService;
 
@@ -80,4 +82,14 @@ public class ProjetController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    @PostMapping("/{id}/backlog/{idBacklog}")
+    public ResponseEntity<String> affectBacklog(@PathVariable Integer id, @PathVariable Integer idBacklog) {
+        try {
+            projetService.affectProductbacklog(idBacklog, id);
+            return ResponseEntity.ok("ProductBacklog affecté au projet avec succès !");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erreur : " + e.getMessage());
+        }
+    }
+
 }

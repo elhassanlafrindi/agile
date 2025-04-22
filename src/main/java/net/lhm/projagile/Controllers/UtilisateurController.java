@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/agile/utilisateurs")
-@PreAuthorize("hasAnyRole('PRODUCT_OWNER','SCRUM_MASTER')")
+
 public class UtilisateurController {
     private final UtilisateurService utilisateurService;
 
@@ -40,7 +40,7 @@ public class UtilisateurController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne");
         }
     }
-
+    @PreAuthorize("hasAnyRole('PRODUCT_OWNER','SCRUM_MASTER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @Valid @RequestBody UtilisateurDTO utilisateurDTO, BindingResult result) {
         if (result.hasErrors()) {
@@ -57,7 +57,7 @@ public class UtilisateurController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé !");
         }
     }
-
+    @PreAuthorize("hasAnyRole('PRODUCT_OWNER','SCRUM_MASTER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         try {
@@ -67,7 +67,7 @@ public class UtilisateurController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé !");
         }
     }
-
+    @PreAuthorize("hasAnyRole('PRODUCT_OWNER','SCRUM_MASTER')")
     @GetMapping
     public ResponseEntity<List<Utilisateur>> getAll() {
         List<Utilisateur> all = utilisateurService.getAllUtilisateurs();

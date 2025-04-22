@@ -50,7 +50,7 @@ public class JwtAuthentificationFilter extends UsernamePasswordAuthenticationFil
                 .collect(Collectors.toList());
         Algorithm algorithm = Algorithm.HMAC256("secret");
         String jwtAccessToken = JWT.create().withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+2*60*1000))
+                .withExpiresAt(new Date(System.currentTimeMillis()+10*60*1000))
                 .withIssuer(request.getRequestURI().toString())
                 .withClaim("role",roles)
                 .sign(algorithm);

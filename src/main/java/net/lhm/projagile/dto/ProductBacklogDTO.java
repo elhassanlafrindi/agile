@@ -11,4 +11,5 @@ public class ProductBacklogDTO {
     @NotNull(message = "Le nom est obligatoire")
     @Size(min = 3, message = "Le nom doit contenir au moins 3 caractères")
     private String nom;
+    int id;
 }
