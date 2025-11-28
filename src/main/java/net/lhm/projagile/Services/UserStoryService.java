@@ -14,6 +14,6 @@ public interface UserStoryService {
         void updateUserStoryStatut(int userStoryID, Statut statut);
         List<UserStoryResponseDTO> getAllUserStory();
         List<UserStoryResponseDTO> getAllUserStoryByStatus(Statut statut);
-        List<UserStoryResponseDTO> getAllUserStoryByID(int id);
+        UserStoryResponseDTO getUserStoryById(int id); // Changed method name and return type
         List<UserStoryResponseDTO> getAllUserStoryByPriority(Priority priority);
 }
