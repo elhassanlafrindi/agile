@@ -15,7 +15,7 @@ public class ProductBacklog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private Date dateCreation;
+    private Date dateCreated;
     @OneToMany(mappedBy ="productBacklog", fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnore
     private List<UserStory> userStories ;
