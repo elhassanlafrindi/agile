@@ -11,11 +11,9 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface UserStoryMapper {
 
-
     @Mapping(target = "statut", expression = "java(net.lhm.projagile.entities.Statut.ToDo)")
     @Mapping(target = "productBacklog", ignore = true)
     UserStory toEntity(UserStoryDTO dto);
-
 
     UserStoryResponseDTO toResponseDTO(UserStory userStory);
 }

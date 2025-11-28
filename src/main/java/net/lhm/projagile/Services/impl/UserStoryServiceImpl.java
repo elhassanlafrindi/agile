@@ -107,14 +107,14 @@ public class UserStoryServiceImpl implements UserStoryService {
     }
 
     @Override
-    public List<UserStoryResponseDTO> getAllUserStoryByID(int id) {
+    public UserStoryResponseDTO getUserStoryById(int id) {
         logger.info("Fetching user story by ID: {}", id);
         UserStory userStory = userStoryRepository.findById((long) id)
                 .orElseThrow(() -> new EntityNotFoundException("UserStory not found with id: " + id));
         
         UserStoryResponseDTO dto = userStoryMapper.toResponseDTO(userStory);
         logger.info("User story found with ID: {}", id);
-        return List.of(dto);
+        return dto;
     }
 
     @Override

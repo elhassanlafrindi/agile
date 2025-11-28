@@ -109,11 +109,8 @@ public class UserStoryController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<UserStoryResponseDTO> getUserStoryById(@Parameter(description = "User Story ID") @PathVariable int id) {
-        List<UserStoryResponseDTO> userStories = userStoryService.getAllUserStoryByID(id);
-        if (userStories.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(userStories.get(0), HttpStatus.OK);
+        UserStoryResponseDTO userStory = userStoryService.getUserStoryById(id);
+        return new ResponseEntity<>(userStory, HttpStatus.OK);
     }
 
     @GetMapping("/status/{statut}")
