@@ -16,9 +16,16 @@ public class Task {
     private Statut statut;
 
 
+    // The user who created the task
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId")
-    private User user;
+    @JoinColumn(name = "created_by_id")
+    private User createdBy;
+
+    // The user assigned to execute the task
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assigned_user_id")
+    private User assignedTo;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private UserStory userStory;
 }

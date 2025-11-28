@@ -30,8 +30,13 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id")
     private User createdBy;
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    List<Task> tasks;
+
+    // All tasks created by this user
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
+    private List<Task> tasksCreated;
+
+    // All tasks assigned to this user
+    @OneToMany(mappedBy = "assignedTo", fetch = FetchType.LAZY)
+    private List<Task> tasksAssigned;
 
 }
