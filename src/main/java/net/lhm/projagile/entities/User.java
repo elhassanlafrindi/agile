@@ -31,7 +31,7 @@ public class User {
     @JoinColumn(name = "created_by_id")
     private User createdBy;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     List<Task> tasks;
 
 }

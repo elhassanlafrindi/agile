@@ -20,6 +20,9 @@ public class ProductBacklog {
     @JsonIgnore
     private List<UserStory> userStories ;
 
+    @OneToMany(mappedBy = "productBacklog",fetch = FetchType.LAZY)
+    List<Epic> epics;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy ="productBacklog" )
     List<SprintBacklog> sprintBacklogs;
 }
