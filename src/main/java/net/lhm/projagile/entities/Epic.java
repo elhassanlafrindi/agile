@@ -12,10 +12,10 @@ import java.util.List;
 public class Epic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String titre;
+    private Long id;
+    private String title;
     private String description;
-  @ManyToMany(fetch = FetchType.EAGER, mappedBy = "epics")
-    List<UserStory> usetStory;
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "epic")
+    List<UserStory> userStories;
 
 }

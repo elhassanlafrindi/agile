@@ -1,11 +1,9 @@
 package net.lhm.projagile.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity @Data
@@ -18,13 +16,13 @@ public class UserStory {
     private int id;
     private String title;
     private String description;
-    private int priorite;
     @Enumerated(EnumType.STRING)
     private Statut statut;
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
 
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Epic> epics;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Epic epic;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private ProductBacklog productBacklog;

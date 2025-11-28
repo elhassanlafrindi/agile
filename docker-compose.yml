@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  mysql-agile:
+    container_name: agile
+    image: mysql:8.0-debian
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: agile-db
+      MYSQL_USER: agileUser
+      MYSQL_PASSWORD: AgilePass
+      MYSQL_ROOT_PASSWORD: agileRoot
+    ports:
+      - "3307:3306"
+    volumes:
+      - volume_agile:/var/lib/mysql
+
+volumes:
+  volume_agile:
