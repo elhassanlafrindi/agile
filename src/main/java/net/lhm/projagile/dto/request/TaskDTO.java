@@ -1,4 +1,4 @@
-package net.lhm.projagile.dto.response;
+package net.lhm.projagile.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,17 +6,20 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
 @Builder
 @Data
-public class EpicResponseDTO {
-    @NotNull
-    private Long id;
+public class TaskDTO {
     @NotBlank
-    @Size(min = 5, max = 50)
+    @Size(max = 100)
     private String title;
     @NotBlank
-    @Size(min = 5, max = 50)
+    @Size(max = 255)
     private String description;
-    private List<UserStoryResponseDTO> userStories;
+
+    @NotNull
+    private long createdByUserId;
+    @NotNull
+    private long assignedToUserId;
+    @NotNull
+    private long userStoryId;
 }

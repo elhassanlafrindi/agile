@@ -15,7 +15,7 @@ import java.util.List;
 public class User {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String firstName;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;

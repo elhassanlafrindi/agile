@@ -15,7 +15,6 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Statut statut;
 
-
     // The user who created the task
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by_id")
@@ -27,5 +26,6 @@ public class Task {
     private User assignedTo;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_story_id")
     private UserStory userStory;
 }

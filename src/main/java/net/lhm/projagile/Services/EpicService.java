@@ -5,8 +5,6 @@ import net.lhm.projagile.dto.response.EpicResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface EpicService {
     void createEpic(EpicDTO epicDTO);
     void updateEpic(long id, EpicDTO epicDTO);

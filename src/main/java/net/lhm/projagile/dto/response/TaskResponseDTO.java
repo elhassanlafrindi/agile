@@ -6,17 +6,22 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
 @Builder
 @Data
-public class EpicResponseDTO {
+public class TaskResponseDTO {
     @NotNull
     private Long id;
     @NotBlank
-    @Size(min = 5, max = 50)
+    @Size(max = 100)
     private String title;
     @NotBlank
-    @Size(min = 5, max = 50)
+    @Size(max = 255)
     private String description;
-    private List<UserStoryResponseDTO> userStories;
+
+    @NotNull
+    private String emailUserCreatedBy;
+    @NotNull
+    private String emailUserAssignedTo;
+    @NotNull
+    private Long userStoryId;
 }
