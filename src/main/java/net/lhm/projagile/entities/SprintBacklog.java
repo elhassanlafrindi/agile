@@ -20,7 +20,7 @@ public class SprintBacklog {
     private Date dateCreated;
     private Date dateEnd;
 
-    @OneToMany(mappedBy = "sprintBacklog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sprintBacklog", fetch = FetchType.LAZY)
     private List<UserStory> userStories ;
 
     @ManyToOne

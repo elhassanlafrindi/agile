@@ -75,7 +75,10 @@ public class SprintBacklogServiceImpl implements SprintBacklogService {
         logger.info("Deleting sprint backlog with ID: {}", id);
         SprintBacklog sprintBacklog = sprintBacklogRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("SprintBacklog not found with id: " + id));
-
+        sprintBacklog.getUserStories().stream().forEach(story -> {
+            story.setSprintBacklog(null);
+            userStoryRepository.save(story);
+        });
         sprintBacklogRepository.delete(sprintBacklog);
         logger.info("Sprint backlog deleted successfully with ID: {}", id);
     }

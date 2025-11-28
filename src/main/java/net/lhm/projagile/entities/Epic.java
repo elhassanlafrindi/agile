@@ -15,7 +15,11 @@ public class Epic {
     private Long id;
     private String title;
     private String description;
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "epic")
+    
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "epic")
     List<UserStory> userStories;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_backlog_id")
+    ProductBacklog productBacklog;
 }
