@@ -23,7 +23,6 @@ public class SprintBacklog {
     @OneToMany(mappedBy = "sprintBacklog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UserStory> userStories ;
 
-
     @ManyToOne
     ProductBacklog productBacklog;
 }
