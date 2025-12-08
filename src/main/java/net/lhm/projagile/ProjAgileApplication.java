@@ -14,8 +14,4 @@ public class ProjAgileApplication  {
     public static void main(String[] args) {
         SpringApplication.run(ProjAgileApplication.class, args);
     }
-@Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-}
 }
