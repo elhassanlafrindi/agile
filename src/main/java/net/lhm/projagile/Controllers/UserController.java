@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +18,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasAuthority;
 
 @RestController
 @RequestMapping("/api/users")
@@ -77,11 +80,12 @@ public class UserController {
                     content = @Content(mediaType = "application/json", 
                             schema = @Schema(implementation = UserResponseDTO.class)))
     })
+
     public ResponseEntity<Page<UserResponseDTO>> getAllUsers(@Parameter(description = "Pagination information") Pageable pageable) {
         Page<UserResponseDTO> users = userService.getAllUsers(pageable);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('PRODUCT_OWNER')")
     @GetMapping("/{id}")
     @Operation(summary = "Get User by ID", description = "Retrieve a User by its ID")
     @ApiResponses(value = {
