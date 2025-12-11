@@ -1,10 +1,13 @@
 package net.lhm.projagile.config;
 
-import net.lhm.projagile.entities.User;
-import net.lhm.projagile.Repositories.UserRepository;
-import net.lhm.projagile.entities.Role;
+
+import net.lhm.projagile.security.AuthorizationFilter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,14 +28,23 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthorizationFilter authorizationFilter) throws Exception {
         http
-                .authorizeHttpRequests(authz -> authz
-                        .anyRequest().permitAll()  // Autorise toutes les requêtes
-                )
-                .csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // pas de session
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/authentication/login",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                );
+
+        http.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -54,27 +66,9 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    
-//    @Bean
-//    public CommandLineRunner initData(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-//        return args -> {
-//            if (userRepository.findByEmail("elhassan.lafrindi@gmail.com").isEmpty()) {
-//                User user = User.builder()
-//                        .firstName("elhassan")
-//                        .lastName("lafrindi")
-//                        .email("elhassan.lafrindi@gmail.com")
-//                        .role(Role.PRODUCT_OWNER)
-//                        .isActive(true)
-//                        .createdAt(LocalDateTime.now())
-//                        .password(passwordEncoder.encode("elhassan.lafrindi@gmail.com"))
-//                        .build();
-//
-//                user.setCreatedBy(user);
-//
-//                userRepository.save(user);
-//            } else {
-//                System.out.println("Initial user already exists: elhassan.lafrindi@gmail.com");
-//            }
-//        };
-//    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
 }
